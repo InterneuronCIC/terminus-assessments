@@ -1,0 +1,127 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="modal" style="display: none;" id="dummyDiv"></div>
+<div class="modal-header bg-info text-white">
+  <h5 class="modal-title">
+    <fa-icon name="icons.checkSquareIcon"></fa-icon> Audit History - {{ title }}
+  </h5>
+
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <span class="text-dark">
+
+    <!-- {{ message }} -->
+    <div *ngIf="historyView == 'form'">
+      <div class="alert alert-info">
+        <div class="row">
+          <div class="col-md-2">
+            <button class="btn btn-info text-white" (click)="backToList()">
+              <fa-icon [icon]="icons.chevronLeftIcon"></fa-icon> Back
+            </button>
+          </div>
+          <div class="col-md-2">
+            <strong>Date</strong><br />
+            {{historyForm._createddate | date:'dd/MM/yyyy'}}
+          </div>
+          <div class="col-md-5">
+            <strong>User</strong><br />
+            <span *ngIf="historyForm._createdby"> {{ historyForm._createdby }} </span>
+            <span *ngIf="!historyForm._createdby"> Dev User </span>
+          </div>
+          <div class="col-md-3">
+            <strong>Status</strong><br />
+            <span> {{ historyForm.responsestatus == 'draft' ? 'Draft' : (historyForm.responsestatus == 'Deleted' ? 'Deleted: ' : 'Completed') }} {{ historyForm.responsestatus == 'Deleted' ? historyForm.responsestatusreason : '' }} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="historyView == 'list'">
+      <div *ngIf="historyList">
+        <ul class="list-group" *ngFor="let opt of historyList">
+          <li class="list-group-item list-group-item-action" (click)="viewHistoryForm(opt)">
+            <div style="padding:5px;">
+              <div class="row pointer">
+                <div class="col-md-3">
+                  {{ opt._createddate | date:'dd/MM/yyyy' }}
+                </div>
+                <div class="col-md-5">
+                  <span *ngIf="opt._createdby"> {{ opt._createdby }} </span>
+                  <span *ngIf="!opt._createdby"> Dev User </span>
+                </div>
+                <div class="col-md-3">
+                  {{ opt.responsestatus == 'draft' ? 'Draft' : (opt.responsestatus == 'Deleted' ? 'Deleted' : 'Completed') }}
+                </div>
+                <!-- <div class="col-md-4">
+                <strong>Assigned to</strong><br />
+                {{opt.assignedto}}
+              </div> -->
+                <div class="col-md-1" style="padding-top:2px;">
+                  <span class="float-right text-dark">
+                    <fa-icon [icon]="icons.arrowRightIcon"></fa-icon>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+
+
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div *ngIf="historyView == 'form'">
+
+
+
+      <formio [form]="generatedForm" (render)="onRender()" [options]="options" [submission]="submission"
+        (change)="onChange($event)">
+      </formio>
+
+      <hr />
+
+      <button class="btn btn-info text-white" (click)="backToList()">
+        <fa-icon [icon]="icons.chevronLeftIcon"></fa-icon> Back
+      </button>
+
+    </div>
+
+  </span>
+</div>
+<div class="modal-footer">
+  <!-- <button type="button" class="btn btn-secondary btn-sm" (click)="decline()">
+    <fa name="times"></fa> {{ btnCancelText }}
+  </button>
+  <button type="button" class="btn btn-primary btn-sm" (click)="accept()" ngbAutofocus>
+    <fa name="check"></fa> {{ btnOkText }}
+  </button> -->
+</div>
+
+<ngx-spinner name="form-history-spinner" bdColor="rgba(0, 0, 0, 0.8)" [fullScreen]="false" type="ball-spin-clockwise"
+  size="medium">
+  <p style="color: white"> Loading ... </p>
+</ngx-spinner>

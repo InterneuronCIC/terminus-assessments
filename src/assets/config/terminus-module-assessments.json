@@ -1,0 +1,41 @@
+{
+  "apiEndpoints": {
+    "getRBACActionsUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListByPost/rbac_actions",
+    "patientAssessmentCountUrl": "SYNAPSE_DYNAMIC_URI/GetListByAttribute/core/formbuilderresponse/person_id/",
+    "patientAssessmentsUrl": "SYNAPSE_DYNAMIC_URI/GetListByPost/core/formbuilderresponse/true",
+    "assessmentTypesUrl": "SYNAPSE_DYNAMIC_URI/GetListByPost/meta/formbuilderform/",
+    "personDataForModalBannerUrl": "SYNAPSE_DYNAMIC_URI/GetListByAttribute/patientbanner_modalpatientbanner?synapseattributename=person_id&attributevalue=",
+    "formBuilderResponsePostUrl": "SYNAPSE_DYNAMIC_URI/PostObject/core/formbuilderresponse",
+    "formBuilderResponseDeleteUrl": "SYNAPSE_DYNAMIC_URI/DeleteObject/core/formbuilderresponse/",
+    "getAssessmentHistoryURI": "SYNAPSE_DYNAMIC_URI/GetObjectHistory/core/formbuilderresponse/",
+    "careRecordURI": "",
+    "terminologyURI": "",
+    "autonomicURI": "",
+    "imageServerURI": "https://TERMINUS_URI/assets/images",
+    "generatePdfDocumentUrl": "",
+    "dynamicApiURI": "SYNAPSE_DYNAMIC_URI",
+    "latestPlateletCountUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestplateletcount/person_id/",
+    "latestBmiUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestbmi/person_id/",
+    "latestCancerRecordUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestcancerrecord/person_id/"
+  },
+  "siteSettings": {
+    "pdfCssUrl": "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
+    "noOfRecordsToDisplay": 100,
+    "formIds": "'db5a7a0a-3394-6f44-3ed6-df0db7388ca3', 'ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b', '6a898df4-b11a-399a-07e6-883d823cb4b2', '032fcd09-6979-14f8-4a80-91cb1a94390d'",
+    "formAddEditRole": "",
+    "prodbuild": true
+  },
+  "assessmentForms": [
+    {
+      "formId": "6a898df4-b11a-399a-07e6-883d823cb4b2",
+      "fields": [
+        {
+          "fieldId": "latestPlateletCount",
+          "dataUrl": "",
+          "attributeName": "person_id",
+          "propertyName": "observationvaluenumeric"
+        }
+      ]
+    }
+  ]
+}

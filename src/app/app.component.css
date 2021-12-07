@@ -1,0 +1,7 @@
+.pointer {
+  cursor: pointer;
+}
+
+.modal{
+  z-index: 3050;
+}

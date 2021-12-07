@@ -1,0 +1,274 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+
+
+<div class="container-fluid">
+  <div class="col-md-1"></div>
+  <div class="card" *ngIf="!showForm">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Assessments</h3>
+        </div>
+        <div class="col-md-8">
+          <!-- <div class="form-inline d-flex justify-content-center md-form form-sm mt-0">
+            <fa-icon [icon]="icons.searchIcon"></fa-icon>
+            <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" 
+              [(ngModel)]="filter"/>
+          </div> -->
+          <div class="form-inline d-flex justify-content-end md-form form-sm mt-0" *ngIf="appService.authoriseAction('add assessment')">
+            <select class="form-control" id="ddlAssessmentTypes" name="ddlAssessmentTypes" [(ngModel)]="selectedAssessment"
+              [ngClass]="{ 'is-invalid': isAssessmentTypeSelected }" (change)="onAssessmentTypeChange()">
+              <option [ngValue]="null">Please select</option>
+              <option *ngFor="let type of assessmentTypes" [ngValue]="type">{{ type.formname }}</option>
+            </select>&nbsp;&nbsp;
+            <img src="assets/images/addicon.svg" height="32px" width="32px" (click)="onAddAssessment()" class="pointer" />
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <div class="col-md-12">
+          <a href="#" (click)="onSelectAll()">Select All</a> | <a href="#" (click)="onSelectNone()">Clear All</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" *ngFor="let type of assessmentTypes">
+          <input type="checkbox" name="type" [id]="type.formbuilderform_id" value="{{ type.formname }}"
+            [(ngModel)]="type.checked" (change)="onCheckboxChanged()" [disabled]="type.disabled" />
+          <label [for]="type.category" class="ml-1">{{ type.formname }} ({{ type.dataCount }})</label>
+        </div>
+      </div> -->
+    </div>
+    <div class="card-body">
+      <div class="card-text">
+        <div class=table-responsive-xl>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr class="tableizer-firstrow">
+                <th>
+                  Assessment Date 
+                  <a href="#" (click)="sortAssessment('_createddate')" class="float-right">                  
+                    <fa-icon [icon]="icons.sortIcon"></fa-icon>
+                  </a>
+                </th>
+                <th>
+                  Completed By
+                  <a href="#" (click)="sortAssessment('_createdby')" class="float-right">
+                    <fa-icon [icon]="icons.sortIcon"></fa-icon>
+                  </a>
+                </th>
+                <th>
+                  Assessment Type
+                  <a href="#" (click)="sortAssessment('formname')" class="float-right">
+                    <fa-icon [icon]="icons.sortIcon"></fa-icon>
+                  </a>
+                </th>
+                <th>
+                  Assessment Status
+                  <a href="#" (click)="sortAssessment('responsestatus')" class="float-right pointer">
+                    <fa-icon [icon]="icons.sortIcon"></fa-icon>
+                  </a>
+                </th>
+                <th>
+                  Assessment Version
+                  <a href="#" (click)="sortAssessment('responseversion')" class="float-right pointer">
+                    <fa-icon [icon]="icons.sortIcon"></fa-icon>
+                  </a>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assessment of filteredAssessments | stringFilter: filter">
+                <td *ngIf="!isLoading">
+                  <div class="mt-1 mb-1">
+                    {{ assessment._createddate | date: 'dd/MM/yyyy' }}
+                  </div>
+                </td>
+                <td *ngIf="!isLoading">
+                  <div class="mt-1 mb-1">
+                    {{ assessment._createdby }}
+                  </div>
+                </td>                  
+                <td *ngIf="!isLoading">
+                  <div class="mt-1 mb-1">
+                    {{ assessment.formname }}
+                  </div>
+                </td>
+                <td *ngIf="!isLoading">
+                  <div class="mt-1 mb-1">
+                    {{ assessment.responsestatus == 'draft' ? 'Draft' : (assessment.responsestatus == 'Deleted' ? 'Deleted:' : 'Completed') }} <br />
+                    {{ assessment.responsestatus == 'Deleted' ? assessment.responsestatusreason : '' }}
+                  </div>
+                </td>
+                <td *ngIf="!isLoading">
+                  <div class="mt-1 mb-1">
+                    {{ assessment.responseversion }}
+                  </div>
+                </td>
+                <td *ngIf="!isLoading">
+                  <div class="row">
+                    <div class="col mt-1 mb-1">
+                      <img src="assets/images/eye.svg" height="32px" width="32px" (click)="onViewAssessment(assessment)" class="pointer" />
+                    </div>
+                    <div class="col mt-1 mb-1">
+                      <img src="assets/images/amendIcon.svg" height="32px" width="32px" (click)="onEditAssessment(assessment)" class="pointer" 
+                        *ngIf="appService.authoriseAction('add assessment') && assessment.responsestatus != 'Deleted'" />
+                    </div>
+                    <div class="col mt-1 mb-1">
+                      <img src="assets/images/deleteIcon.svg" height="32px" width="32px" (click)="onConfirmDeleteAssessment(assessment)" class="pointer"
+                        *ngIf="appService.authoriseAction('add assessment') && assessment.responsestatus != 'Deleted' && assessment._createdby == appService.loggedInUserId" />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="6" *ngIf="filteredAssessments.length == 0 && !isLoading">
+                  <div class="d-flex justify-content-center">No matching record</div>
+                </td>
+              </tr>
+              <tr *ngIf="isLoading">
+                <td colspan="6">                
+                  <div class="d-flex justify-content-center" *ngIf="isLoading">
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" *ngIf="showForm">
+    <div class="card-header">
+      <div class="row">
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-text">
+        <div class="row d-print-none">
+          <div class="col">
+            <button class="btn btn-secondary w-100" (click)="onCancel()">
+              <fa-icon [icon]="icons.arrowLeftIcon"></fa-icon> Return to module
+            </button>
+          </div>
+          <div class="col" *ngIf="!isAddEditMode">
+            <button class="btn btn-primary w-100" onclick="window.print(); return false;">
+              <fa-icon [icon]="icons.printIcon"></fa-icon> Print
+            </button>
+          </div>
+          <div class="col" *ngIf="!isAddEditMode">
+            <button class="btn btn-info float-right text-white w-100" (click)="onViewHistory()"
+              style="margin-left: 7px; margin-right: 7px;">
+              <fa-icon [icon]="icons.checkSquareIcon"></fa-icon> Audit
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div *ngIf="selectedPOA && !appService.lockedOrBlocked">
+              <div *ngIf="selectedPOA.iscompletedsocialhistory">
+                <button class="btn btn-sm btn-success btn-block text-white float-right"
+                  (click)="markSectionCompleted(false)">
+                  <fa-icon [icon]="icons.checkIcon"></fa-icon> Click here to remove Completed status
+                </button>
+              </div>
+              <div *ngIf="!selectedPOA.iscompletedsocialhistory">
+                <button class="btn btn-sm btn-danger btn-block text-white float-right" (click)="markSectionCompleted(true)">
+                  <fa-icon [icon]="icons.timesIcon"></fa-icon> Click here to show Completed status
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-center m-3">
+              <h4>{{ formResponse.formname + (formResponse.responseversion > 0 ? (" version " + formResponse.responseversion + ".0") : "") + (formResponse.responsestatus == 'Deleted' ? ' (Deleted: ' + formResponse.responsestatusreason + ')' : '') }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <formio [form]="generatedForm" (submit)="onSubmit($event)" (render)="onRender()" [refresh]="triggerRefresh"
+              [options]="formOptions" [submission]="submission" (change)="onChange($event)">
+            </formio>
+            <div *ngIf="showVersionWarning">
+              <div class="alert alert-warning">
+        
+                <small>
+                  <span>This form was created using a previous version of the selected form (version:
+                    {{formResponse.formversion}}).</span>
+                  <br />
+                  <span>Current Version: {{ currentFormVersion }}</span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal code-->
+
+<!-- Confirm delete modal -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteTitle">Delete Assessment</h5>
+                <button type="button" class="close" aria-label="Close" (click)="confirmDeleteModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form name="deleteForm" (ngSubmit)="deleteForm.form.valid && onDeleteAssessment()" #deleteForm="ngForm" novalidate>
+                <div class="form-group">
+                  <label>Reason to Delete</label>
+                  <input type="text" name="reasonToDelete" class="form-control" [(ngModel)]="assessmentToDelete.responsestatusreason" #reasonToDelete=ngModel maxlength="250" 
+                    [ngClass]="{ 'is-invalid': deleteForm.submitted && reasonToDelete.invalid }" required />
+                  <div *ngIf="deleteForm.submitted && reasonToDelete.invalid" class="invalid-feedback">
+                    <div *ngIf="reasonToDelete.errors.required">Reason to delete is required</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary mr-1">Delete Assessment</button>
+                  <button type="reset" class="btn btn-secondary" (click)="confirmDeleteModal.hide()" #resetDeleteFormButton>Close</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
