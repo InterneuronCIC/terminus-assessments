@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   title = "Assessments Module";
 
-  private subscriptions: Subscription = new Subscription();
+  public subscriptions: Subscription = new Subscription();
 
   // Variables for page loading functionality
   isLoading: boolean = false;
@@ -58,7 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showForm: boolean = false;
   isAddEditMode: boolean = false;
   showVersionWarning: boolean = false;
-  
+
   // Variables for load more functionality
   noOfRecordsToLoad: number;
   totalAssessmentCount: number;
@@ -83,7 +83,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   //FormIO
   submission: any;
-  generatedForm: any;  
+  generatedForm: any;
   formOptions: Object = {
     submitMessage: "",
     disableAlerts: true,
@@ -93,7 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
   formResponse: CoreFormResponse;
   triggerRefresh: EventEmitter<unknown>;
   dataObject: any;
-  
+
   // Variables to control form elements
   @ViewChild("confirmDeleteModal", {static: false}) confirmDeleteModal: ModalDirective;
   @ViewChild("pdfBodyDiv", {static: false}) divPdfBody: ElementRef;
@@ -105,13 +105,13 @@ export class AppComponent implements OnInit, OnDestroy {
   currentFormVersion: number;
 
   //constructor
-  constructor(private appService: AppService,
-    private apiRequestService: ApirequestService,
-    private errorHandlerService: ErrorHandlerService,
-    private moduleObservables: ModuleObservablesService,
+  constructor(public appService: AppService,
+    public apiRequestService: ApirequestService,
+    public errorHandlerService: ErrorHandlerService,
+    public moduleObservables: ModuleObservablesService,
     public icons: IconsService,
-    private toasterService: ToasterService,
-    private formioHistoryService: FormioHistoryService) {
+    public toasterService: ToasterService,
+    public formioHistoryService: FormioHistoryService) {
     this.subscribeEvents();
   }
 
@@ -137,20 +137,18 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
 
-    //this.appService.loggedInUserId = "indiwar@interneuron.org";
-
     // Initialise module configuration file
     if (!this.appService.moduleConfig) {
       this.subscriptions.add(
         this.apiRequestService.getRequest("./assets/config/terminus-module-assessments.json?v=" + Math.random()).subscribe(
           (response) => {
             this.appService.moduleConfig = response;
-            
+
             //get actions for rbac
             this.subscriptions.add(this.apiRequestService.postRequest(this.appService.moduleConfig.apiEndpoints.getRBACActionsUri, this.createRoleFilter(decodedToken))
-            .subscribe((response: action[]) => {
-              this.appService.roleActions = response;
-            }));
+              .subscribe((response: action[]) => {
+                this.appService.roleActions = response;
+              }));
 
             this.moduleObservables.contextChanged.next();
           }
@@ -164,10 +162,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     // var value: any = {};
-    // value.contexts = JSON.parse("[{\"encounter_id\": \"4123ba14-0cc1-4751-aab9-26dd978baffe\", \"person_id\": \"024b806d-5dd2-449b-8370-427da60fd00b\"}]");
-    // value.personId = "024b806d-5dd2-449b-8370-427da60fd00b"; //ALLEN, Catherine
+    // value.contexts = JSON.parse("[{\"encounter_id\": \"4123ba14-0cc1-4751-aab9-26dd978baffe\", \"person_id\": \"75544ba3-c185-418f-9bb8-ec47df51b183\"}]");
+    // value.personId = "75544ba3-c185-418f-9bb8-ec47df51b183"; //ALLEN, Catherine
 
-    // this.appService.personId = "024b806d-5dd2-449b-8370-427da60fd00b";
+    // this.appService.personId = "75544ba3-c185-418f-9bb8-ec47df51b183";
     // this.appService.contexts = value.contexts;
 
     // value.apiService = {};
@@ -265,7 +263,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
               assessment.formcomponents = JSON.stringify(formComponents);
             });
-            
+
             this.fetchallAssessments();
             //this.onSelectAll();
           }));
@@ -295,61 +293,61 @@ export class AppComponent implements OnInit, OnDestroy {
         "selectstatement": "SELECT *"
       },
       {
-        "ordergroupbystatement": "ORDER BY _createddate DESC Limit " + this.noOfRecordsToLoad
+        "ordergroupbystatement": "ORDER BY lastupdateddatetime DESC Limit " + this.noOfRecordsToLoad
       }
     ];
 
     this.subscriptions.add(
       this.apiRequestService.postRequest(this.appService.moduleConfig.apiEndpoints.patientAssessmentsUrl, payload)
-      .subscribe(
-        async (response: any) => {
-          this.allAssessments = response;
+        .subscribe(
+          async (response: any) => {
+            this.allAssessments = response;
 
-          if(this.allAssessments.length > 0) {
-            this.allAssessments.map(a => {
-              let assessmentType = this.assessmentTypes.find(x => x.formbuilderform_id == a.formbuilderform_id);
-              if(assessmentType) {
-                a.formname = assessmentType.formname;
-              }
-
-              //remove system properties
-
-              delete a._contextkey;
-              delete a._createdmessageid;
-              delete a._createdsource;
-              delete a._recordstatus;
-              delete a._row_id;
-              delete a._sequenceid;
-              delete a._tenant;
-              delete a._timezonename;
-              delete a._timezoneoffset;
-
-              // Code to disable Completed By Field
-              
-              let formComponents: any[] = JSON.parse(a.formcomponents);              
-
-              formComponents.map(comp => {
-                if (comp.components) {
-                  comp.components.map(component => {
-                    if (component.key == "completedByName") {
-                      component.disabled = true;
-                    }
-                  });
+            if (this.allAssessments.length > 0) {
+              this.allAssessments.map(a => {
+                let assessmentType = this.assessmentTypes.find(x => x.formbuilderform_id == a.formbuilderform_id);
+                if (assessmentType) {
+                  a.formname = assessmentType.formname;
                 }
-              });              
 
-              a.formcomponents = JSON.stringify(formComponents);
-            });
+                //remove system properties
 
-            this.filteredAssessments = this.allAssessments;
+                delete a._contextkey;
+                delete a._createdmessageid;
+                delete a._createdsource;
+                delete a._recordstatus;
+                delete a._row_id;
+                delete a._sequenceid;
+                delete a._tenant;
+                delete a._timezonename;
+                delete a._timezoneoffset;
 
-            this.sortDirection = -1;
-            this.sortAssessment("_createddate");
+                // Code to disable Completed By Field
+
+                let formComponents: any[] = JSON.parse(a.formcomponents);
+
+                formComponents.map(comp => {
+                  if (comp.components) {
+                    comp.components.map(component => {
+                      if (component.key == "completedByName") {
+                        component.disabled = true;
+                      }
+                    });
+                  }
+                });
+
+                a.formcomponents = JSON.stringify(formComponents);
+              });
+
+              this.filteredAssessments = this.allAssessments;
+
+              this.sortDirection = -1;
+              this.sortAssessment("lastupdateddatetime");
+            }
+
+            this.isLoading = false;
           }
-
-          this.isLoading = false;
-        }
-      )
+        )
     );
   }
 
@@ -393,7 +391,7 @@ export class AppComponent implements OnInit, OnDestroy {
   //   this.filterAssessments();
   // }
 
-  /*************** Sort Functionality ***************/ 
+  /*************** Sort Functionality ***************/
 
   sortAssessment(propertyName) {
     this.filteredAssessments.sort(sortByProperty(propertyName, this.sortDirection));
@@ -409,9 +407,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async buildDataObject() {
 
-    this.dataObject = JSON.parse('{"data":' + this.formResponse.formresponse + '}') ;
+    this.dataObject = JSON.parse('{"data":' + this.formResponse.formresponse + '}');
     this.dataObject["data"]["configBearerAuthToken"] = this.bearerAuthToken;
-    
+
     this.dataObject["data"]["configGlobalURL"] = this.appService.moduleConfig.apiEndpoints.dynamicApiURI;
     this.dataObject["data"]["configTerminologyURL"] = this.appService.moduleConfig.apiEndpoints.terminologyURI;
     this.dataObject["data"]["configImageServerURL"] = this.appService.moduleConfig.apiEndpoints.imageServerURI;
@@ -419,7 +417,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.dataObject["data"]["configPersonId"] = this.appService.personId;
     this.dataObject["data"]["configDynamicApiUrl"] = this.appService.moduleConfig.apiEndpoints.dynamicApiURI;
 
-    this.dataObject["data"]["configUserUsername"] =  this.appService.loggedInUserId;
+    this.dataObject["data"]["configUserUsername"] = this.appService.loggedInUserId;
     this.dataObject["data"]["configUserDisplayName"] = this.appService.loggedInUserName;
 
     this.dataObject["data"]["configUserDisplayName"] = this.appService.loggedInUserName;
@@ -449,18 +447,25 @@ export class AppComponent implements OnInit, OnDestroy {
       this.submission = await this.buildDataObject();
 
       // Prepopulate values
-      
+
       let latestPlateletResult = await this.apiRequestService.getRequest(this.appService.moduleConfig.apiEndpoints.latestPlateletCountUri + this.appService.personId).toPromise();
       latestPlateletResult = JSON.parse(latestPlateletResult);
       //latestPlateletResult.observationvaluenumeric = 49;
 
       let latestBMI = await this.apiRequestService.getRequest(this.appService.moduleConfig.apiEndpoints.latestBmiUri + this.appService.personId).toPromise();
-      latestBMI = JSON.parse(latestBMI);    
+      latestBMI = JSON.parse(latestBMI);
       //latestBMI.observationvaluenumeric = 31;
 
       let latestCancerRecord = await this.apiRequestService.getRequest(this.appService.moduleConfig.apiEndpoints.latestCancerRecordUri + this.appService.personId).toPromise();
       latestCancerRecord = JSON.parse(latestCancerRecord);
       //latestCancerRecord.observationvalue = true;
+
+      let latestVteHistory = await this.apiRequestService.getRequest(this.appService.moduleConfig.apiEndpoints.latestVteHistoryUri + this.appService.personId).toPromise();
+      latestVteHistory = JSON.parse(latestVteHistory);
+      //latestVteHistory.observationvalue = true;
+
+      let currentPatientAge = await this.apiRequestService.getRequest(this.appService.moduleConfig.apiEndpoints.currentPatientAgeUri + this.appService.personId).toPromise();
+      currentPatientAge = JSON.parse(currentPatientAge);      
 
       // Initialise platelet checkbox
       if (latestPlateletResult.result_id && latestPlateletResult.observationvaluenumeric) {
@@ -482,32 +487,33 @@ export class AppComponent implements OnInit, OnDestroy {
             if (!this.submission["data"]["contraIndicationsAspirin"]) {
               this.submission["data"]["contraIndicationsAspirin"] = {};
             }
-            this.submission["data"]["contraIndicationsAspirin"]["platelets100X109L"] = true;          
+            this.submission["data"]["contraIndicationsAspirin"]["platelets100X109L"] = true;
           }
         }
         //Adolescents VTE form
-        else if(this.selectedAssessment.formbuilderform_id == "ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b") {
+        else if (this.selectedAssessment.formbuilderform_id == "ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b") {
           if (latestPlateletResult.observationvaluenumeric < 75) {
             if (!this.submission["data"]["patientRelatedBleedingRisk"]) {
               this.submission["data"]["patientRelatedBleedingRisk"] = {};
             }
-            this.submission["data"]["patientRelatedBleedingRisk"]["thrombocytopeniaPlatelets75X10"] = true;
+            this.submission["data"]["patientRelatedBleedingRisk"]["thrombocytopeniaPlatelets75X109L"] = true;
           }
         }
         // Reassessments
         else if (this.selectedAssessment.formbuilderform_id == "032fcd09-6979-14f8-4a80-91cb1a94390d" ||
           this.selectedAssessment.formbuilderform_id == "db5a7a0a-3394-6f44-3ed6-df0db7388ca3") {
           if (latestPlateletResult.observationvaluenumeric < 100) {
-            if (!this.submission["data"]["bleedingRisks"]) {
-              this.submission["data"]["bleedingRisks"] = {};
+            if (!this.submission["data"]["plateletCount100X109L"]) {
+              this.submission["data"]["plateletCount100X109L"] = {};
             }
-            this.submission["data"]["bleedingRisks"]["plateletCount100X109L"] = true;          
-          } 
+            this.submission["data"]["plateletCount100X109L"] = "yes";
+          }
         }
       }
 
       // Initialise BMI checkboxes
       if (latestBMI.result_id && latestBMI.observationvaluenumeric) {
+        //VTE Assessment
         if (this.selectedAssessment.formbuilderform_id == "6a898df4-b11a-399a-07e6-883d823cb4b2") {
           if (latestBMI.observationvaluenumeric > 30) {
             if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
@@ -516,21 +522,30 @@ export class AppComponent implements OnInit, OnDestroy {
             this.submission["data"]["patientRelatedThrombosisRisk"]["obesityBmi30KgM"] = true;
           }
         }
+        //Adolescents VTE form
+        else if (this.selectedAssessment.formbuilderform_id == "ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b") {
+          if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
+            this.submission["data"]["patientRelatedThrombosisRisk"] = {};
+          }
+          this.submission["data"]["patientRelatedThrombosisRisk"]["obesityBmi30KgM2"] = true;
+        }
       }
 
       // Initialise Cancer History Check
       if (latestCancerRecord.result_id && latestCancerRecord.observationvalue && latestCancerRecord.observationvalue == true) {
+        //VTE Assessment
         if (this.selectedAssessment.formbuilderform_id == "6a898df4-b11a-399a-07e6-883d823cb4b2") {
           if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
             this.submission["data"]["patientRelatedThrombosisRisk"] = {};
           }
           this.submission["data"]["patientRelatedThrombosisRisk"]["activeCancerOrCancerTreatmentChemoRadioWithinLast6Months"] = true;
-          
+
           if (!this.submission["data"]["contraIndicationsAspirin"]) {
             this.submission["data"]["contraIndicationsAspirin"] = {};
           }
           this.submission["data"]["contraIndicationsAspirin"]["activeOrMetastaticCancer"] = true;
         }
+        //Adolescents VTE form
         else if (this.selectedAssessment.formbuilderform_id == "ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b") {
           if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
             this.submission["data"]["patientRelatedThrombosisRisk"] = {};
@@ -539,11 +554,44 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
 
+      // Initialise VTE History check
+      if (latestVteHistory.result_id && latestVteHistory.observationvalue && latestVteHistory.observationvalue == true) {
+        //VTE Assessment
+        if (this.selectedAssessment.formbuilderform_id == "6a898df4-b11a-399a-07e6-883d823cb4b2") {
+          if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
+            this.submission["data"]["patientRelatedThrombosisRisk"] = {};
+          }
+          this.submission["data"]["patientRelatedThrombosisRisk"]["personalHistoryOfVte"] = true;
+
+          if (!this.submission["data"]["contraIndicationsAspirin"]) {
+            this.submission["data"]["contraIndicationsAspirin"] = {};
+          }
+          this.submission["data"]["contraIndicationsAspirin"]["previousVte"] = true;
+        }
+        //Adolescents VTE form
+        else if(this.selectedAssessment.formbuilderform_id == "ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b") {          
+          if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
+            this.submission["data"]["patientRelatedThrombosisRisk"] = {};
+          }
+          this.submission["data"]["patientRelatedThrombosisRisk"]["personalHistoryOfVte"] = true;          
+        }
+      }
+
+      //Initialise Age checkbox
+      if (currentPatientAge.person_id && currentPatientAge.value > 60) {
+        if (this.selectedAssessment.formbuilderform_id == "6a898df4-b11a-399a-07e6-883d823cb4b2") {
+          if (!this.submission["data"]["patientRelatedThrombosisRisk"]) {
+            this.submission["data"]["patientRelatedThrombosisRisk"] = {};
+          }
+          this.submission["data"]["patientRelatedThrombosisRisk"]["ageGt60Yrs"] = true;
+        }
+      }
+
       this.submission["data"]["completedByName"] = this.appService.loggedInUserId;
 
-      
 
-      this.generatedForm =  {
+
+      this.generatedForm = {
         title: this.selectedAssessment.formname,
         components: JSON.parse(this.selectedAssessment.formcomponents)
       };
@@ -553,7 +601,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.isAddEditMode = true;
 
       this.showVersionWarning = false;
-        
+
     }
     else {
       this.isAssessmentTypeSelected = true;
@@ -561,18 +609,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async onViewAssessment(assessment: CoreFormResponse) {
-    console.log(assessment);
     this.isAddEditMode = false;
 
     this.formResponse = assessment;
-        
+
     // Disable components
     var resp = [];
     for (const control of JSON.parse(this.formResponse.formcomponents)) {
       if (control.key == 'submit' || control.key == 'saveAsDraft') {
         control.hidden = true;
       }
-      else if(control.type == "table") {
+      else if (control.type == "table") {
         for (const row of control.rows) {
           for (const item of row) {
             for (const component of item.components) {
@@ -592,14 +639,14 @@ export class AppComponent implements OnInit, OnDestroy {
       title: this.formResponse.formname,
       components: JSON.parse(this.formResponse.formcomponents)
     };
-    
+
     this.submission = await this.buildDataObject();
 
     this.showForm = true;
 
     // Version conflict check
     let currentAssessmentForm = this.assessmentTypes.find(x => x.formbuilderform_id == this.formResponse.formbuilderform_id);
-    
+
     if (currentAssessmentForm && currentAssessmentForm.version != this.formResponse.formversion) {
       this.showVersionWarning = true;
       this.currentFormVersion = currentAssessmentForm.version;
@@ -619,7 +666,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (control.key == 'submit' || control.key == 'saveAsDraft') {
         control.hidden = false;
       }
-      else if(control.type == "table") {
+      else if (control.type == "table") {
         for (const row of control.rows) {
           for (const item of row) {
             for (const component of item.components) {
@@ -643,13 +690,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.submission = await this.buildDataObject();
 
     this.submission["data"]["completedByName"] = this.appService.loggedInUserId;
-    this.submission["data"]["completedDate"] = new Date();    
+    this.submission["data"]["completedDate"] = new Date();
 
     this.showForm = true;
 
     // Version conflict check
     let currentAssessmentForm = this.assessmentTypes.find(x => x.formbuilderform_id == this.formResponse.formbuilderform_id);
-    
+
     if (currentAssessmentForm && currentAssessmentForm.version != this.formResponse.formversion) {
       this.showVersionWarning = true;
       this.currentFormVersion = currentAssessmentForm.version;
@@ -669,17 +716,17 @@ export class AppComponent implements OnInit, OnDestroy {
     const deleteionDate: any = new Date();
     this.confirmDeleteModal.hide();
     this.assessmentToDelete.responsestatus = "Deleted";
-    this.assessmentToDelete._createddate = deleteionDate.toJSON().substr(0, 19);
+    //this.assessmentToDelete._createddate = deleteionDate.toJSON().substr(0, 19);
 
     delete this.assessmentToDelete.formname;
-    
+
     this.subscriptions.add(
       this.apiRequestService.postRequest(this.appService.moduleConfig.apiEndpoints.formBuilderResponsePostUrl, this.assessmentToDelete)
-      .subscribe(async (response) => {
-        this.assessmentToDelete = new CoreFormResponse();
-        await this.fetchallAssessments();
-        this.resetDeleteForm();
-    }));
+        .subscribe(async (response) => {
+          this.assessmentToDelete = new CoreFormResponse();
+          await this.fetchallAssessments();
+          this.resetDeleteForm();
+        }));
   }
 
   onViewAsPDF() {
@@ -719,7 +766,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(submission: any) {
-    console.log(submission);
     //Delete default placeholder if present
     delete submission["data"]["new"];
     //Delete the configBearerAuthToken for the submission
@@ -733,16 +779,27 @@ export class AppComponent implements OnInit, OnDestroy {
     //Delete the submit for the submission
     delete submission["data"]["submit"];
     //Delete personId confg
-    delete submission["data"]["configPersonId"];
+    delete submission["data"]["configPersonId"];    
 
     this.formResponse.formresponse = JSON.stringify(submission["data"]);
     this.formResponse.responsemeta = JSON.stringify(submission["metadata"]);
+
+    let submissionDate = new Date(submission["data"]["completedDate"]);
+    let currentDate = new Date();
+    let year = submissionDate.getFullYear();
+    let month = ('0' + (submissionDate.getMonth() + 1)).slice(-2);
+    let date = ('0' + submissionDate.getDate()).slice(-2);
+    let hour = ('0' + currentDate.getHours()).slice(-2);
+    let minutes = ('0' + currentDate.getMinutes()).slice(-2);
+    let seconds = ('0' + currentDate.getSeconds()).slice(-2);
+    
+    let submissionDateJson = `${year}-${month}-${date}T${hour}:${minutes}:${seconds}`;
     
     if (this.formResponse.responsestatus == "New") {
-      this.formResponse.createddatetime = submission["data"]["completedDate"].substr(0, 19);;
+      this.formResponse.createddatetime = submissionDateJson;
       this.formResponse.createdby = this.appService.loggedInUserName;
     }
-    this.formResponse.lastupdateddatetime = submission["data"]["completedDate"].substr(0, 19);;
+    this.formResponse.lastupdateddatetime = submissionDateJson;
     this.formResponse.updatedby = this.appService.loggedInUserId;
 
     this.formResponse.responsestatus = submission.state;
@@ -751,21 +808,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
     delete this.formResponse.formname;
 
-    this.formResponse._createddate = submission["data"]["completedDate"] == "" ? null : submission["data"]["completedDate"].substr(0, 19);
+    //this.formResponse._createddate = submission["data"]["completedDate"] == "" ? null : submission["data"]["completedDate"].substr(0, 19);
     this.formResponse._createdby = this.appService.loggedInUserId;
 
 
     this.subscriptions.add(
       this.apiRequestService.postRequest(this.appService.moduleConfig.apiEndpoints.formBuilderResponsePostUrl, this.formResponse)
-      .subscribe((response) => {
+        .subscribe((response) => {
 
-        this.toasterService.showToaster("Success","Assessment Saved " + (submission.state == "draft" ? "as draft": ""));
+          this.toasterService.showToaster("Success", "Assessment Saved " + (submission.state == "draft" ? "as draft" : ""));
 
-        this.fetchallAssessments();
+          this.fetchallAssessments();
 
-        this.showForm = false;
-        this.isAddEditMode = false;
-      }
+          this.showForm = false;
+          this.isAddEditMode = false;
+        }
     ));
   }
 
@@ -776,17 +833,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.generatedForm = null;
-    this.showForm = false;
-    this.isAddEditMode = false;
+    if (confirm("This will cancel any changes, do you want to continue?")) {
+      this.generatedForm = null;
+      this.showForm = false;
+      this.isAddEditMode = false;
+    }
   }
 
   async onViewHistory() {
     var response = false;
     await this.formioHistoryService.confirm(this.formResponse.formbuilderresponse_id, this.formResponse.formname)
-    .then((confirmed) => response = confirmed)
-    .catch(() => response = false);
-    if(!response) {
+      .then((confirmed) => response = confirmed)
+      .catch(() => response = false);
+    if (!response) {
       return;
     }
   }
@@ -827,7 +886,7 @@ export class AppComponent implements OnInit, OnDestroy {
     body.push(pm);
     body.push(select);
     body.push(orderby);
-    
+
     return JSON.stringify(body);
   }
 

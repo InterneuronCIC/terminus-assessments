@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2021  Interneuron CIC
+Copyright(C) 2022  Interneuron CIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
           </div>
           <div class="col-md-2">
             <strong>Date</strong><br />
-            {{historyForm._createddate | date:'dd/MM/yyyy'}}
+            {{historyForm.lastupdateddatetime | date:'dd/MM/yyyy HH:mm'}}
           </div>
           <div class="col-md-5">
             <strong>User</strong><br />
@@ -65,7 +65,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
             <div style="padding:5px;">
               <div class="row pointer">
                 <div class="col-md-3">
-                  {{ opt._createddate | date:'dd/MM/yyyy' }}
+                  {{ opt.lastupdateddatetime | date:'dd/MM/yyyy HH:mm' }}
                 </div>
                 <div class="col-md-5">
                   <span *ngIf="opt._createdby"> {{ opt._createdby }} </span>

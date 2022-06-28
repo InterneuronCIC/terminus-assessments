@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 //END LICENSE BLOCK 
 import { Injectable } from '@angular/core';
 import { TerminusModuleAssessmentsConfig } from 'src/app/models/config/terminus-module-assessments.model';
-import * as jwt_decode from "jwt-decode";
+import  jwt_decode from "jwt-decode";
 import { action } from 'src/app/models/synapse-dynamic-api/Filter.model';
 
 @Injectable({

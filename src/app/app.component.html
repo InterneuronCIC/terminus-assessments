@@ -1,7 +1,7 @@
 <!--BEGIN LICENSE BLOCK--> 
 <!--Interneuron Terminus
 
-Copyright(C) 2021  Interneuron CIC
+Copyright(C) 2022  Interneuron CIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
               <tr class="tableizer-firstrow">
                 <th>
                   Assessment Date 
-                  <a href="#" (click)="sortAssessment('_createddate')" class="float-right">                  
+                  <a href="#" (click)="sortAssessment('lastupdateddatetime')" class="float-right">                  
                     <fa-icon [icon]="icons.sortIcon"></fa-icon>
                   </a>
                 </th>
@@ -100,7 +100,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
               <tr *ngFor="let assessment of filteredAssessments | stringFilter: filter">
                 <td *ngIf="!isLoading">
                   <div class="mt-1 mb-1">
-                    {{ assessment._createddate | date: 'dd/MM/yyyy' }}
+                    {{ assessment.lastupdateddatetime | date: 'dd/MM/yyyy HH:mm' }}
                   </div>
                 </td>
                 <td *ngIf="!isLoading">
@@ -191,7 +191,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
             </button>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-md-6">
             <div *ngIf="selectedPOA && !appService.lockedOrBlocked">
               <div *ngIf="selectedPOA.iscompletedsocialhistory">
@@ -207,7 +207,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="row">
           <div class="col">
             <div class="d-flex justify-content-center m-3">

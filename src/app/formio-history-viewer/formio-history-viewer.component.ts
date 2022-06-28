@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import { Subscription } from 'rxjs';
 import { CoreFormResponse } from '../models/entities/core-form-response.model';
 import { ApirequestService } from '../../services/api-request.service';
 import { AppService } from '../../services/app.service';
-import { FormioForm, FormioOptions } from '@formio/angular';
+import { FormioForm, FormioOptions } from 'angular-formio';
 import { IconsService } from 'src/services/icons.service';
 
 @Component({

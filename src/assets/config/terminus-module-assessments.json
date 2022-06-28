@@ -11,17 +11,19 @@
     "careRecordURI": "",
     "terminologyURI": "",
     "autonomicURI": "",
-    "imageServerURI": "https://TERMINUS_URI/assets/images",
+    "imageServerURI": "TERMINUS_URI/assets/images",
     "generatePdfDocumentUrl": "",
     "dynamicApiURI": "SYNAPSE_DYNAMIC_URI",
     "latestPlateletCountUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestplateletcount/person_id/",
     "latestBmiUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestbmi/person_id/",
-    "latestCancerRecordUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestcancerrecord/person_id/"
+    "latestCancerRecordUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestcancerrecord/person_id/",
+    "latestVteHistoryUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_latestvtehistory/person_id/",
+    "currentPatientAgeUri": "SYNAPSE_DYNAMIC_URI/GetBaseViewListObjectByAttribute/bvassessment_currentpatientage/person_id/"
   },
   "siteSettings": {
     "pdfCssUrl": "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
     "noOfRecordsToDisplay": 100,
-    "formIds": "'db5a7a0a-3394-6f44-3ed6-df0db7388ca3', 'ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b', '6a898df4-b11a-399a-07e6-883d823cb4b2', '032fcd09-6979-14f8-4a80-91cb1a94390d'",
+    "formIds": "'ff09f5bd-67ed-4be2-30c1-9e8be4bfcb9b', '6a898df4-b11a-399a-07e6-883d823cb4b2', '032fcd09-6979-14f8-4a80-91cb1a94390d'",
     "formAddEditRole": "",
     "prodbuild": true
   },

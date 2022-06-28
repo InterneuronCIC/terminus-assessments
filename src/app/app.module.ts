@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER ,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { Injector } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createCustomElement } from '@angular/elements';
@@ -37,7 +37,7 @@ import { StringFilterPipe } from './pipes/string-filter.pipe';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { FormioModule } from '@formio/angular';
+import { FormioModule } from 'angular-formio';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -63,6 +63,8 @@ import { FormioHistoryService } from './formio-history-viewer/formio-history-vie
     FormioModule,
     ToastrModule.forRoot()
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+
   providers: [
     DatePipe,
     FormioHistoryService
